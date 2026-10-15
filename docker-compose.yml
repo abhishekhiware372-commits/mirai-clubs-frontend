@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: mirai_clubs_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mirai_clubs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mirai_clubs"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mirai_clubs_web
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/mirai_clubs
+      SECRET_KEY: mirai-hackathon-super-secret-jwt-key-2026
+      ENVIRONMENT: production
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/backend/uploads
+      - ./generated_certificates:/app/backend/generated_certificates
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

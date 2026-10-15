@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.DS_Store
+*.db
+*.sqlite
+generated_certificates/*.pdf
+!generated_certificates/.gitkeep
+uploads/*
+!uploads/.gitkeep

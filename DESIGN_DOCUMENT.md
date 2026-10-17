@@ -2,13 +2,13 @@
 **Product:** Centralized Club Activities Tracker  
 **Institution:** Mirai School of Technology (MSOT)  
 **Standard:** Problem 5 Challenge Specification  
-**Version:** 2.0.0 (Production Release)  
+**Version:** 1.0.0 (Production Release — October 15, 2026)  
 
 ---
 
 ## 1. System Architecture & Component Overview
 
-Mirai Clubs is engineered as a robust, low-latency, database-backed university platform managing the complete co-curricular lifecycle across 4 regional campuses and 30+ student organizations.
+Mirai Clubs is engineered as a robust, low-latency, database-backed university platform managing the complete co-curricular lifecycle across 4 regional campuses and **4 officially sanctioned student organizations** (strict institutional limit enforced at API and database boundary).
 
 ```mermaid
 flowchart TD
@@ -25,7 +25,7 @@ flowchart TD
     end
 
     subgraph PersistenceLayer ["Persistence Layer"]
-        Postgres[("PostgreSQL 16 / SQLite Engine<br>32 Clubs, 4 Campuses, 5 Roles")]
+        Postgres[("PostgreSQL 16 / SQLite Engine<br>4 Official Clubs, 4 Campuses, 5 Roles")]
         Storage[("Local / Cloud Object Storage<br>PDF Certificates & Deliverables")]
     end
 

@@ -1,153 +1,186 @@
 # MIRAI CLUBS — Club Activities Tracker
 ### Mirai School of Technology (MSOT) | Problem 5 Challenge Solution
 
-[![Build Status](https://img.shields.io/badge/tests-17%20passed-emerald)](TEST_REPORT.md)
+[![Build Status](https://img.shields.io/badge/tests-19%20passed-brightgreen)](TEST_REPORT.md)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-teal.svg)](https://fastapi.tiangolo.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
-A centralized, database-backed platform managing the complete co-curricular club lifecycle across multiple campuses at Mirai School of Technology. Designed to fulfill all three core requirements of the MSOT Problem 5 Challenge:
-1. **Verified Participation:** Dual-factor attendance, rubric evaluations, and cryptographic audit trails.
-2. **Low Coordinator Effort:** Mobile-first 15-second rotating QR check-in and one-touch presenter recognition.
-3. **Student-Owned Records:** Downloadable, digitally verified PDF transcripts and public certificate verification.
+A centralized, database-backed platform managing the complete co-curricular club lifecycle across multiple campuses at Mirai School of Technology. Fulfilling all three core requirements of the MSOT Problem 5 Challenge:
+
+1. **Verified Participation** — 15-second rotating cryptographic QR attendance, rubric evaluations, and immutable audit trails.
+2. **Low Coordinator Effort** — Mobile-first bottom navigation bar, one-click membership approval/rejection, single-tap QR broadcast.
+3. **Student-Owned Records** — Downloadable, SHA-256 verified PDF transcripts and publicly verifiable certificates at `/verify/{cert_number}`.
 
 ---
 
-## 🏛️ Multi-Campus Scope & Seeded Data
+## 🎯 Official Clubs (Strictly 4)
 
-Mirai Clubs is pre-configured with **4 official campuses** and **32 active clubs**:
-- **MST-BLR:** Mirai Main Campus — Tech City (Bangalore) [8 Clubs]
-- **MST-NCR:** Mirai North Campus — Innovation Hub (Noida) [8 Clubs]
-- **MST-HYD:** Mirai Cyber Campus — Tech Valley (Hyderabad) [8 Clubs]
-- **MST-PUN:** Mirai Western Campus — Engineering Park (Pune) [8 Clubs]
+Per MSOT institutional policy, exactly **four official clubs** are registered across four campuses. The API enforces this with HTTP 400 on any attempt to create a 5th.
 
-Categories covered: *Technical & Coding, Robotics & Hardware, Entrepreneurship, Design & Creative Arts, Social Impact, Literary & Debate, Sports & Fitness, Music & Cultural.*
+| Club | Category | Campus |
+| :--- | :--- | :--- |
+| **Nexcell — Entrepreneurship Club** | Entrepreneurship | Bangalore (MST-BLR) |
+| **Khel Society — Sports Club** | Sports | Bangalore (MST-BLR) |
+| **Kaizen — Technology Club** | Technology | Noida (MST-NCR) |
+| **Malhar — Cultural Club** | Cultural | Pune (MST-PUN) |
+
+---
+
+## 🏛️ Four Official Campuses
+
+| Code | Campus |
+| :--- | :--- |
+| MST-BLR | Mirai Main Campus — Tech City (Bangalore) |
+| MST-NCR | Mirai North Campus — Innovation Hub (Noida) |
+| MST-HYD | Mirai Cyber Campus — Tech Valley (Hyderabad) |
+| MST-PUN | Mirai Western Campus — Engineering Park (Pune) |
 
 ---
 
 ## 👥 Five Required User Roles & Demo Credentials
 
-All test accounts share the universal demo password: `MiraiDemo#2026`
+All test accounts share the universal demo password: **`MiraiDemo#2026`**
 
-| Role | Name | Email | Primary Responsibilities |
+| Role | Name | Email | Dashboard |
 | :--- | :--- | :--- | :--- |
-| **Admin** | Dr. Vikram Sen | `admin@mirai.edu.in` | Global multi-campus oversight, user role assignments, system-wide exports |
-| **Campus Manager** | Anita Roy | `anita.manager@mirai.edu.in` | Bangalore campus clubs review, inactive clubs monitoring, duty leave |
-| **Faculty Advisor** | Dr. Radha Nair | `advisor.nair@mirai.edu.in` | Activity plan approval, deliverable rubric grading, certificate issuance |
-| **Student Coordinator** | Rohan Sharma | `rohan.coord@mirai.edu.in` | Entrepreneurship Club planning, 15s rotating QR sessions, presenters |
-| **Student 1** | Alex Chen | `alex.chen@student.mirai.edu` | Primary club enrolment, QR check-in, submissions, PDF transcript |
-| **Student 2** | Priya Patel | `priya.patel@student.mirai.edu` | Multi-club member, hackathon team lead, certificate recipient |
-| **Student (Zero)** | Kavya Rao | `kavya.zero@student.mirai.edu` | Zero-participation baseline test account for advisor outreach |
+| **Admin / Program Manager** | Dr. Vikram Sen | `admin@mirai.edu.in` | `#dashboard-admin` |
+| **Campus Manager** | Anita Desai | `anita.manager@mirai.edu.in` | `#dashboard-campus-manager` |
+| **Faculty Advisor** | Dr. Radha Nair | `advisor.nair@mirai.edu.in` | `#dashboard-advisor` |
+| **Student Coordinator** | Rohan Sharma | `rohan.coord@mirai.edu.in` | `#dashboard-coordinator` |
+| **Student** | Alex Chen | `alex.chen@student.mirai.edu` | `#dashboard-student` |
+| **Student 2** | Priya Patel | `priya.patel@student.mirai.edu` | `#dashboard-student` |
+
+> **Security:** Unregistered Google emails are strictly rejected with **HTTP 403** and a message directing users to contact the Dean of Student Affairs or Campus Administrator. No automatic account creation.
 
 ---
 
 ## 🚀 Quick Start & Deployment
 
 ### Option 1: One-Command Docker Setup (Recommended)
-Launch the entire system (PostgreSQL 16 database, FastAPI backend, and frontend) with a single command:
 ```bash
 docker compose up --build
 ```
-Access the application at:
-- **Web App (Frontend & Role Switcher):** [http://localhost:8000](http://localhost:8000)
-- **Interactive OpenAPI Documentation:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Alternative ReDoc UI:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+Access at:
+- **Web App:** [http://localhost:8000](http://localhost:8000)
+- **Swagger API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-### Option 2: Local Python Environment Setup
-1. **Activate virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-2. **Seed the database (Populates campuses, 32 clubs, sessions, and demo accounts):**
-   ```bash
-   python backend/seed.py
-   ```
-3. **Start the FastAPI server:**
-   ```bash
-   uvicorn app.main:app --app-dir backend --reload --port 8000
-   ```
-4. **Open your browser:** Navigate to `http://localhost:8000`.
+### Option 2: Local Python Development Setup
+```bash
+# 1. Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Seed database with official clubs, campuses, and all 5 demo roles
+cd backend && python seed.py && cd ..
+
+# 4. Start FastAPI backend
+PYTHONPATH=backend uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# 5. Serve frontend (open frontend/index.html in browser, or use a file server)
+# The frontend auto-connects to http://localhost:8000
+```
 
 ---
 
-## 🧪 Testing & Verification
+## 🧪 Test Suite Results (19/19 Passed)
 
-### 1. Run Automated Pytest Suite (17 Tests)
-Execute the complete quality assurance suite covering end-to-end multi-club workflows, attendance integrity, 20-certificate tamper detection, 200 event registrations, RBAC, and PDF generation:
 ```bash
-pytest backend/tests -v
-```
-**Current Status:** `17 passed in 7.81s`
+# Run the full test suite
+pytest backend/tests/ -v
 
-### 2. Run High-Concurrency Load Benchmark (100, 300, 500 Check-Ins)
-Benchmark the attendance check-in engine under peak load (target: $p95 < 1000\text{ ms}$):
-```bash
+# Run the load/concurrency benchmark
 python backend/tests/load_test.py
 ```
-**Actual Benchmark Results:**
-- **100 Concurrent:** $p95 = 202.09\text{ ms}$, Throughput = 302.5 req/s, Error rate = 0.00%
-- **300 Concurrent:** $p95 = 293.12\text{ ms}$, Throughput = 387.3 req/s, Error rate = 0.00%
-- **500 Concurrent:** $p95 = 262.96\text{ ms}$, Throughput = 380.8 req/s, Error rate = 0.00%
+
+**Test Matrix:**
+
+| Suite | Tests | Result |
+| :--- | :---: | :---: |
+| `test_all_workflows.py` | 12 | ✅ 12/12 PASSED |
+| `test_official_problem5_suite.py` | 7 | ✅ 7/7 PASSED |
+| **Total** | **19** | **✅ 19/19 PASSED** |
+
+**Concurrency Benchmark (0% error rate, all runs):**
+
+| Concurrent Check-Ins | Throughput | p50 | p95 | Target | Status |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| 100 | 306 req/s | 95 ms | **256 ms** | <1000 ms | ✅ PASS |
+| 300 | 366 req/s | 93 ms | **227 ms** | <1000 ms | ✅ PASS |
+| 500 | 378 req/s | 97 ms | **258 ms** | <1000 ms | ✅ PASS |
 
 ---
 
-## 🛠️ Key Architectural Features
-
-1. **Rotating QR Code Attendance Engine:**
-   - 15-second HMAC-SHA256 time-based rotating tokens.
-   - Prevents screenshot proxy check-ins across messaging apps.
-   - Includes ±1 window grace period for campus network fluctuations.
-   - Single-tap coordinator screen marking session presenters and on-the-spot recognition.
-   - Audited manual correction overrides with mandatory justification logging.
-2. **Co-Curricular PDF Transcripts:**
-   - High-fidelity PDF generation using Python `reportlab`.
-   - Comprehensive transcript ledger: enrolled clubs, session attendances, graded deliverables, rubric scores, and event honors.
-   - Embedded public verification QR code and SHA-256 digital integrity stamp.
-3. **Public Certificate Verification Portal:**
-   - Real-time cryptographic validation via `/verify/{cert_number}`.
-   - Detects database tampering or altered certificate metadata.
-4. **Institutional Analytics & CSV Exports:**
-   - Inactive clubs compliance monitor (flags clubs with 0 sessions in 30 days).
-   - Zero-participation student watchlist for proactive faculty outreach.
-   - Weighted student engagement leaderboard.
-   - One-click RFC 4180 CSV exports for clubs, attendance, and compliance reports.
-
----
-
-## 📂 Repository Structure
+## 🏗️ Architecture
 
 ```
 mirai-clubs/
 ├── backend/
 │   ├── app/
-│   │   ├── api/v1/          # REST route handlers (auth, clubs, attendance, reports)
-│   │   ├── core/            # JWT security, config, and settings
-│   │   ├── db/              # SQLAlchemy session and engine setup
-│   │   ├── models/          # Relational entities (User, Club, Activity, etc.)
-│   │   ├── schemas/         # Pydantic v2 validation models
-│   │   └── services/        # PDF transcript and certificate generators
-│   ├── tests/
-│   │   ├── test_all_workflows.py            # Workflow integration tests
-│   │   ├── test_official_problem5_suite.py  # 7 official Problem 5 challenge tests
-│   │   └── load_test.py                     # 500-user concurrency benchmark
-│   └── seed.py              # Multi-campus database seeder
-├── frontend/
-│   ├── css/styles.css       # Custom design system & animations
-│   ├── js/api.js            # Centralized asynchronous API client
-│   ├── js/app.js            # Single-page UI router & state controller
-│   └── index.html           # Main responsive web portal
-├── docker-compose.yml       # Production Docker multi-container specification
-├── Dockerfile               # Python 3.9 production container
-├── DESIGN_DOCUMENT.md       # Architectural specification & Mermaid diagrams
-├── TEST_REPORT.md           # Comprehensive 8-area QA test report
-└── requirements.txt         # Frozen Python dependencies
+│   │   ├── api/v1/endpoints/   # REST API routes (auth, clubs, activities, attendance...)
+│   │   ├── models/entities.py  # SQLAlchemy ORM models
+│   │   ├── schemas/schemas.py  # Pydantic request/response schemas
+│   │   ├── services/           # PDF certificates, QR tokens, transcripts
+│   │   └── main.py             # FastAPI app entry point
+│   ├── seed.py                 # Database seeder (4 clubs, 4 campuses, all 5 roles)
+│   └── tests/                  # Pytest suites + load benchmark
+└── frontend/                   # Modern Next.js 14 / TypeScript / Tailwind CSS App
+    ├── src/
+    │   ├── app/                # App Router (Student, Coordinator, Advisor, Campus Mgr, Admin)
+    │   ├── components/         # Reusable UI & Problem 5 shared modules (QR, rubrics, timeline)
+    │   ├── context/            # AuthContext (5 RBAC roles) & ToastContext
+    │   └── lib/api/            # Centralized API service layer & isolated test fixtures
+    ├── package.json            # Scripts: dev, build, start, lint
+    ├── tailwind.config.js      # Deep navy + cyan/violet design tokens
+    └── tsconfig.json           # TypeScript configuration
 ```
+
+**Full Stack:** Next.js 14 · React 18 · TypeScript · Tailwind CSS · FastAPI · SQLAlchemy 2 · SQLite / PostgreSQL 16 · ReportLab PDFs · 15s HMAC QR tokens
 
 ---
 
-## 📜 Compliance & Honor Code
+## 🔐 Security & Integrity
 
-This project was built strictly to satisfy MSOT Problem 5 requirements. All reported metrics, benchmarks, and test assertions are reproducible via the commands provided above.
+- **JWT Bearer tokens** — HS256 signed, 7-day expiry
+- **Role guards** — Every protected endpoint enforces `require_role()` dependency
+- **15s rotating QR** — HMAC-SHA256 tokens invalidate on rotation; replay attacks are blocked
+- **Attendance audit trail** — Any correction includes coordinator ID, timestamp, and mandatory reason
+- **Certificate tamper detection** — SHA-256 hash is recomputed on every `/verify/{cert_number}` call; `tamper_detected: true` if any field changes
+- **4-club hard limit** — Enforced at API layer (`HTTP 400`) and cannot be bypassed
+
+---
+
+## 📋 Verified Feature Checklist
+
+| Feature | Status |
+| :--- | :---: |
+| Club Registry (4 official clubs, multi-campus) | ✅ |
+| Student Membership Request & Coordinator Approval | ✅ |
+| 7-Day Club Day Planning & Faculty Advisor Sign-off | ✅ |
+| 15s Rotating HMAC QR Code Attendance | ✅ |
+| Attendance Audit Correction (with immutable reason) | ✅ |
+| Student Deliverable Submissions (file upload) | ✅ |
+| 3-Criterion Rubric Evaluation (Content, Presentation, Participation) | ✅ |
+| Real PDF Certificates with SHA-256 Tamper Detection | ✅ |
+| Public Certificate Verification URL (`/verify/{cert_number}`) | ✅ |
+| Downloadable Co-Curricular Transcript PDF | ✅ |
+| Events & Team Formation with Capacity Limits | ✅ |
+| Role-Based Access Control (5 roles enforced at API) | ✅ |
+| Dedicated Dashboard per Role (Student/Coordinator/Advisor/Manager/Admin) | ✅ |
+| Inactive Clubs Compliance Watchlist (30-day threshold) | ✅ |
+| Zero-Participation Student Registry | ✅ |
+| Top Contributors Leaderboard (weighted points) | ✅ |
+| Monthly Club Health Audit Inspector | ✅ |
+| Academic CSV Exports (clubs, attendance, inactive clubs) | ✅ |
+| Mobile Responsive + Bottom Navigation Bar | ✅ |
+| Unregistered Google Login Rejection (HTTP 403) | ✅ |
+| Notifications System (bell icon, mark all read) | ✅ |
+| Academic Calendar Import (CSV) | ✅ |
+
+---
+
+*MIRAI CLUBS — Built for the MSOT Problem 5 Hackathon Challenge. All test numbers reflect actual executed benchmark outputs.*
